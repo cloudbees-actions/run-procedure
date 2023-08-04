@@ -1,0 +1,37 @@
+name: 'Run CD/RO procedure'
+description: Start a procedure on a remote CloudBees CD/RO instance
+
+inputs:
+  projectName:
+    description: Name of the project containing the procedure
+    required: true
+  procedureName:
+    description: Name of the procedure to run
+    required: true
+  actualParameter:
+    description: Actual parameters to pass to the procedure
+    required: false
+  
+runs:
+  using: "composite"
+  steps:
+    - name: runProcedure API
+      id: run-procedure
+      uses: cloudbees/cdro-actions/eval-dsl@main
+      with:
+        dsl: runProcedure args
+        dsl-args: |
+          projectName: ${{ inputs.projectName }}
+          procedureName: ${{ inputs.procedureName }}
+        dsl-actual-parameter: ${{ inputs.actualParameter }}
+    
+    - name: Attach action meta data to runtime object
+      uses: cloudbees/cdro-actions/eval-dsl@main
+      with:
+        dsl: |
+          def jobId = "${{ fromJson(steps.run-procedure.outputs.response).jobId }}"
+          def repository = "${{ github.repository }}"
+          def run_id = "${{ github.run_id }}"
+          setProperty jobId: jobId,
+            propertyName: "/myJob/report-urls/GitHub Actions Workflow URL",
+            value: "https://github.com/${repository}/actions/runs/${run_id}"
