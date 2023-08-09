@@ -83,7 +83,7 @@ jobs:
 ```
 4. Go to the GitHub `Actions` tab and run the workflow `Create and run procedure`
 ## License
-MIT
+The scripts and documentation in this project are released under the MIT License.
 ## Documentation
 For more details about the CloudBees CD/RO product, view the [online documentation](https://docs.cloudbees.com/docs/cloudbees-cd/latest/).
 
